@@ -7,8 +7,6 @@ const scanner = new RegexScanner();
  * Initializes the paste interceptor in the capture phase.
  */
 function initSafeEnv(): void {
-    console.log('SafeEnv (GhostVault) Content Script Active');
-
     window.addEventListener('paste', (event: ClipboardEvent) => {
         const clipboardData = event.clipboardData;
         if (!clipboardData) return;

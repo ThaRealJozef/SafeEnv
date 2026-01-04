@@ -4,97 +4,144 @@ import { ScanResult } from '../../../src/core/types';
  * Creates and shows a Shadow DOM based alert modal.
  */
 export function showShadowAlert(result: ScanResult, originalText: string): void {
-    // 1. Create Host Element
-    const host = document.createElement('div');
-    host.id = 'safeenv-ghost-vault-alert';
-    host.style.cssText = 'all: initial; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2147483647; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); pointer-events: auto;';
+  // 1. Create Host Element
+  const host = document.createElement('div');
+  host.id = 'safeenv-ghost-vault-alert';
+  host.style.cssText = 'all: initial; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2147483647; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); pointer-events: auto;';
 
-    // 2. Attach Closed Shadow Root
-    const shadow = host.attachShadow({ mode: 'closed' });
+  // 2. Attach Closed Shadow Root
+  const shadow = host.attachShadow({ mode: 'closed' });
 
-    // 3. Inject Styles
-    const style = document.createElement('style');
-    style.textContent = `
+  // 3. Inject Styles
+  const style = document.createElement('style');
+  style.textContent = `
+    /* --- Modal Container with Glassmorphism --- */
     .modal {
-      background: #1e1e1e;
+      background: rgba(20, 20, 20, 0.85);
       color: #ffffff;
-      padding: 24px;
-      border-radius: 12px;
-      border: 2px solid #ff4d4d;
-      max-width: 450px;
+      padding: 28px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 480px;
       width: 90%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       text-align: center;
+
+      /* Glassmorphism */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
+      /* Entry Animation */
+      animation: modal-entry 0.3s ease-out forwards;
     }
+
+    /* --- Entry Animation Keyframes --- */
+    @keyframes modal-entry {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* --- Header Styling --- */
     .header {
-      color: #ff4d4d;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 16px;
+      color: #ef4444; /* Tailwind red-500 */
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
     }
+
+    /* --- Description Text --- */
     .description {
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 15px;
+      line-height: 1.6;
       margin-bottom: 24px;
-      color: #cccccc;
+      color: #a3a3a3;
     }
+
+    /* --- Match List Container --- */
     .matches {
-      background: #2d2d2d;
-      padding: 12px;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 14px;
+      border-radius: 8px;
       margin-bottom: 24px;
       text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
+
     .match-item {
-      font-family: monospace;
-      color: #ffa07a;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      color: #fb923c; /* Tailwind orange-400 */
       font-size: 13px;
+      padding: 4px 0;
     }
+
+    /* --- Action Buttons --- */
     .actions {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
+
     button {
-      padding: 12px;
-      border-radius: 6px;
+      padding: 14px 18px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      transition: opacity 0.2s;
+      font-size: 14px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
+
     button:hover {
-      opacity: 0.9;
+      transform: translateY(-1px);
     }
+
+    button:active {
+      transform: translateY(0);
+    }
+
     .btn-safe {
-      background: #ff4d4d;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: white;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
     }
+
     .btn-cancel {
-      background: #3d3d3d;
-      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      color: #d4d4d4;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.15);
     }
   `;
-    shadow.appendChild(style);
+  shadow.appendChild(style);
 
-    // 4. Create Modal Structure
-    const modal = document.createElement('div');
-    modal.className = 'modal';
+  // 4. Create Modal Structure
+  const modal = document.createElement('div');
+  modal.className = 'modal';
 
-    const providerList = [...new Set(result.matches.map(m => m.provider))].join(', ');
+  const providerList = [...new Set(result.matches.map(m => m.provider))].join(', ');
+  const secretCount = result.matches.length;
 
-    modal.innerHTML = `
+  modal.innerHTML = `
     <div class="header">
       <span>🛡️ GhostVault Protected</span>
     </div>
     <div class="description">
-      We intercepted a paste containing secrets for: <strong>${providerList}</strong>. 
-      To prevent accidental exposure, we've blocked the raw paste.
+      SafeEnv intercepted a paste containing <strong>${secretCount}</strong> potential secret(s) from <strong>${providerList}</strong>.
+      To prevent accidental exposure, the raw paste has been blocked.
     </div>
     <div class="matches">
       ${result.matches.map(m => `<div class="match-item">${m.provider}: ${m.type}</div>`).join('')}
@@ -105,24 +152,26 @@ export function showShadowAlert(result: ScanResult, originalText: string): void 
     </div>
   `;
 
-    shadow.appendChild(modal);
-    document.body.appendChild(host);
+  shadow.appendChild(modal);
+  document.body.appendChild(host);
 
-    // 5. Wire Up Events
-    const firstMatch = result.matches[0];
-    const varName = `${firstMatch.provider.toUpperCase()}_API_KEY`;
+  // 5. Wire Up Events
+  const firstMatch = result.matches[0];
+  const varName = `${firstMatch.provider.toUpperCase()}_API_KEY`;
 
-    shadow.getElementById('copy-safe')?.addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(`process.env.${varName}`);
-            alert(`Safe reference copied! Please paste it into your code.`);
-            host.remove();
-        } catch (err) {
-            console.error('Failed to write to clipboard', err);
-        }
-    });
+  shadow.getElementById('copy-safe')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(`process.env.${varName}`);
+      alert(`Safe reference copied! Please paste it into your code.`);
+      host.remove();
+    } catch (err) {
+      // User-facing error instead of console
+      alert('Failed to write to clipboard. Please check browser permissions.');
+      host.remove();
+    }
+  });
 
-    shadow.getElementById('cancel')?.addEventListener('click', () => {
-        host.remove();
-    });
+  shadow.getElementById('cancel')?.addEventListener('click', () => {
+    host.remove();
+  });
 }

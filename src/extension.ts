@@ -2,13 +2,14 @@ import * as vscode from 'vscode';
 import { RegexScanner } from './core/scanner/RegexScanner';
 import { ClipboardSentinel } from './services/ClipboardSentinel';
 import { GhostAlertDecorator } from './ui/GhostAlertDecorator';
+import { Logger } from './utils/Logger';
 
 /**
  * This method is called when the extension is activated.
  * Activation depends on the events defined in package.json.
  */
 export function activate(context: vscode.ExtensionContext) {
-    console.log('SafeEnv (GhostVault) is now active!');
+    Logger.info('Extension activated.');
 
     // 1. Initialize Core Logic
     const scanner = new RegexScanner();
