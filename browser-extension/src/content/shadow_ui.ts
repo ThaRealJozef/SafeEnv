@@ -1,5 +1,72 @@
 import { ScanResult } from '../../../src/core/types';
 
+const SCANNING_INDICATOR_ID = 'safeenv-scanning-indicator';
+
+/**
+ * Shows a subtle scanning indicator in the bottom-right corner.
+ */
+export function showScanningState(): void {
+  // Remove existing indicator if present
+  hideScanningState();
+
+  const indicator = document.createElement('div');
+  indicator.id = SCANNING_INDICATOR_ID;
+  indicator.style.cssText = `
+    all: initial;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2147483646;
+    background: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.2s ease-out;
+  `;
+
+  indicator.innerHTML = `
+    <div style="
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ef4444;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    "></div>
+    <span>Scanning...</span>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  `;
+
+  document.body.appendChild(indicator);
+}
+
+/**
+ * Hides the scanning indicator.
+ */
+export function hideScanningState(): void {
+  const existing = document.getElementById(SCANNING_INDICATOR_ID);
+  if (existing) {
+    existing.remove();
+  }
+}
+
 /**
  * Creates and shows a Shadow DOM based alert modal.
  */
