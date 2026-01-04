@@ -1,68 +1,89 @@
-# SafeEnv (GhostVault)
+# SafeEnv (GhostVault) 👻🛡️
+### *The "Oh Sh\*t" Button for your Clipboard.*
 
-## The Seatbelt for Vibe Coding
-> **Protect your API keys from the chaos of modern AI development.**
+<div align="center">
 
-SafeEnv (GhostVault) is a privacy-first security tool designed for the "Vibe Coding" era. Whether you're copying code from ChatGPT, pasting into Lovable, or rapid-prototyping in VS Code, SafeEnv acts as a local sentinel, intercepting secrets *before* they leak.
-
----
-
-## Why SafeEnv?
-
-### 🛡️ Local-Only (Zero Data Exfiltration)
-Your secrets are yours. SafeEnv processes everything **on-device**. No cloud services. No telemetry. No risk.
-
-### ⚡ 0ms Latency
-Built with a highly optimized regex engine (and future-proofed for Rust/WASM), SafeEnv scans your clipboard instantly. You won't feel a thing—until it saves you.
-
-### 🌐 Cross-Platform Protection
-- **VS Code Extension:** Protects your local development workflow.
-- **Chrome Extension:** Protects you on Web IDEs like **Lovable.dev**, **Bolt.new**, and **Replit**.
+  <a href="https://marketplace.visualstudio.com/items?itemName=ThaRealJozef.safeenv">
+    <img src="https://img.shields.io/visual-studio-marketplace/v/ThaRealJozef.safeenv?style=for-the-badge&logo=visual-studio-code" alt="VS Code Marketplace" />
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/Chrome_Web_Store-Coming_Soon-grey?style=for-the-badge&logo=google-chrome" alt="Chrome Web Store" />
+  </a>
+</div>
 
 ---
 
-## Features
+### Tl;dr 💥
+You're "Vibe Coding" at 3AM. You copy a script from ChatGPT. You paste it into `prod.js`.
+**CONGRATS!** You just leaked your AWS Secret Key to GitHub. Your CTO is calling. You are crying.
 
-- **Clipboard Sentinel:** Intercepts paste events containing high-entropy strings (AWS, Stripe, OpenAI keys).
-- **Ghost Alerts:** Non-intrusive UI overlays (Shadow DOM) that warn you without breaking your flow.
-- **Auto-Injection:** One-click to inject a detected secret as a `process.env` variable instead of raw text.
-- **Git Guardian:** Automatically ensures sensitive files like `.env` are added to `.gitignore`.
+> **Why this exists:**
+> A student recently woke up to a **$55,000 debt** because they accidentally leaked an API key on GitHub. It took 2 days to rack up that bill.
+> *Don't be like that student.* (Thankfully, Google waived it, but your CTO might not be as nice).
 
----
-
-## Installation
-
-### VS Code Extension
-1.  Open VS Code.
-2.  Go to Extensions (Ctrl+Shift+X).
-3.  Search for **SafeEnv**.
-4.  Install and reload.
-
-### Chrome Extension
-1.  Download the latest release from the [Chrome Web Store](#) (Coming Soon).
-2.  **Manual Install:**
-    - Clone this repo.
-    - Go to `chrome://extensions`.
-    - Enable "Developer Mode".
-    - Click "Load unpacked" and select the `browser-extension` folder.
+**SafeEnv stops that.**
+Matches text against patterns ➜ intercepts paste ➜ you live to code another day.
 
 ---
 
-## Supported Patterns
-SafeEnv currently detects:
-- **AWS Access Keys** (`AKIA...`)
-- **Stripe Secret Keys** (`sk_live_...`)
-- **OpenAI API Keys** (`sk-...`)
-- **Generic High-Entropy Strings** (Experimental)
+## 🌍 Works Everywhere (Seriously)
+If it looks like VS Code, we probably run on it.
+
+| ⚡ Native Support | 🌲 The Forks | ☁️ In The Cloud |
+| :--- | :--- | :--- |
+| <img src="https://cursor.sh/brand/icon.svg" height="14"/> **Cursor**<br><img src="https://antigravity.google/assets/image/blog/blog-feature-introducing-google-antigravity.png" height="14"/> **Antigravity**<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" height="14"/> **VS Code**<br><img src="https://windsurf.ai/favicon.ico" height="14"/> **Windsurf** | <img src="https://media.licdn.com/dms/image/v2/D560BAQGDj8tODOUsMA/company-logo_200_200/B56Zgd1b5THMAI-/0/1752847204537/traeai_logo?e=2147483647&v=beta&t=N2wG8glnNTLiGMWcuCqq8WigDQVc9ycsocKCOXqwtgM" height="14"/> **Trae**<br><img src="https://trypear.ai/favicon.ico" height="14"/> **PearAI**<br><img src="https://avatars.githubusercontent.com/u/165039930?s=200&v=4" height="14"/> **Void**<br><img src="https://vscodium.com/img/favicon.ico" height="14"/> **VSCodium** | <img src="https://idx.dev/favicon.ico" height="14"/> **Project IDX**<br><img src="https://github.githubassets.com/favicons/favicon.svg" height="14"/> **Codespaces**<br><img src="https://pbs.twimg.com/profile_images/1880708699624542208/QTb9LC0L_400x400.jpg" height="14"/> **StackBlitz** |
+
+> **Web Devs:** We also have a Chrome Extension for **Replit**, **Bolt.new**, and **Lovable**. Because friends don't let friends paste raw secrets into web terminals.
 
 ---
 
-## Disclaimer
-> **PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.**
+## 🚀 Features (V1.1)
 
-SafeEnv is a helper tool to assist in detecting accidental secret exposure. It is **not** a guarantee of security. The authors are not liable for any data leaks, financial loss, or damages arising from the use or failure of this software. Always review your code before committing.
+### ⚡ **"The Flash" Mode (Async Scanning)**
+Pasting a 50MB log file? **We won't freeze your editor.**
+Our new V1.1 engine blocks the paste *instantly*, spins up a background worker, and only lets the text through if it's clean. It's faster than you can say "segfault".
+
+### 👻 **Ghost Mode**
+We catch the secrets in the **Capture Phase**. This means the website or IDE never even *sees* the sensitive data until we say so. It's like a bouncer for your clipboard.
+
+### 🛡️ **"Not My Business" Lists**
+Got a dummy key like `sk_test_123`? Add it to the **Allow List**.
+Got a weird internal company format like `ACME__KEY__999`? Add a **Custom Pattern**.
+We don't judge. We just block.
 
 ---
 
-## License
-MIT © [ThaRealJozef](https://github.com/tharealjozef)
+## 📦 How to Install
+> **🚧 Status: Coming Soon to all marketplaces.**
+> *Presave these instructions for the drop.*
+
+### 💻 Desktop (Cursor / Antigravity / VS Code / Windsurf / etc...)
+
+**Method 1: The "I have a mouse" way**
+1.  Click the **Extensions** icon in the sidebar (the Tetris block thing).
+2.  Search for `SafeEnv`.
+3.  Click **Install**.
+
+**Method 2: The "Hacker" way**
+1.  **Once Live:** Hit `Ctrl+P` (or `Cmd+P` if you're fancy).
+2.  Type `ext install ThaRealJozef.safeenv`.
+3.  Hit Enter. Done. You are now safer than 99% of developers.
+
+### ☁️ Cloud (IDX / Codespaces)
+*   **Project IDX:** Open Extensions panel ➜ Search "SafeEnv" *(Coming Soon)*.
+*   **Codespaces:** Add to `.devcontainer.json` when live:
+    ```json
+    "customizations": { "vscode": { "extensions": ["ThaRealJozef.safeenv"] } }
+    ```
+
+---
+
+## 🛑 The Legal Stuff (Boring but Important)
+SafeEnv is a tool, not a guarantee. If you write your password on a post-it note and stick it to your monitor, we can't help you.
+*   **We run LOCAL ONLY.** No data leaves your machine.
+*   **We are Open Source.** Audit us if you have trust issues (we respect that).
+*   **Use common sense.**
+
+**[Contribute on GitHub](https://github.com/tharealjozef/SafeEnv)** if you want to add more patterns or fix my terrible TypeScript.
+
+Happy (Safe) Coding! 👻
