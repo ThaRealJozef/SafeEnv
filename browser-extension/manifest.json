@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "SafeEnv (GhostVault)",
+    "version": "0.1.0",
+    "description": "Protects your API keys from accidental exposure on Vibe Coding platforms.",
+    "permissions": [
+        "clipboardRead",
+        "clipboardWrite"
+    ],
+    "host_permissions": [
+        "*://*.lovable.dev/*",
+        "*://*.bolt.new/*",
+        "*://*.replit.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.lovable.dev/*",
+                "*://*.bolt.new/*",
+                "*://*.replit.com/*"
+            ],
+            "js": [
+                "dist/content_script.js"
+            ],
+            "run_at": "document_start"
+        }
+    ]
+}

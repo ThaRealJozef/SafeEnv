@@ -1,0 +1,67 @@
+{
+  "name": "safeenv",
+  "displayName": "SafeEnv (GhostVault)",
+  "description": "A local-only secret interception tool. Prevents accidental exposure of API keys.",
+  "version": "0.1.0",
+  "publisher": "ThaRealJozef",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tharealjozef/SafeEnv.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Linters"
+  ],
+  "keywords": [
+    "secrets",
+    "security",
+    "api-keys",
+    "aws",
+    "stripe",
+    "openai",
+    "dotenv"
+  ],
+  "main": "./out/src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "safeenv.scanDocument",
+        "title": "SafeEnv: Scan Current Document for Secrets"
+      }
+    ],
+    "configuration": {
+      "title": "SafeEnv",
+      "properties": {
+        "safeenv.enableClipboardSentinel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable the Clipboard Sentinel."
+        },
+        "safeenv.enableGhostAlerts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline decorations for detected secrets."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.8",
+    "typescript": "^5.3.3"
+  }
+}

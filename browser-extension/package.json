@@ -1,0 +1,13 @@
+{
+    "name": "safeenv-browser-extension",
+    "version": "0.1.0",
+    "description": "SafeEnv Browser Extension for protecting API keys on Vibe Coding sites.",
+    "scripts": {
+        "build": "node build.js",
+        "watch": "node build.js --watch"
+    },
+    "devDependencies": {
+        "esbuild": "^0.20.0",
+        "typescript": "^5.3.3"
+    }
+}

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production / Build
+out/
+dist/
+build/
+*.vsix
+*.crx
+*.pem
+
+# VS Code specific
+.vscode/
+.vscode-test/
+*.code-workspace
+
+# Browser Extension specific
+browser-extension/node_modules/
+browser-extension/dist/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db
+
+# Documentation
+.agent/
+docs/
