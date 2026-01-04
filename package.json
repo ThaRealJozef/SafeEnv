@@ -49,6 +49,61 @@
           "type": "boolean",
           "default": true,
           "description": "Show inline decorations for detected secrets."
+        },
+        "safeenv.enableScanning": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable secret scanning globally."
+        },
+        "safeenv.customPatterns": {
+          "type": "array",
+          "default": [],
+          "description": "User-defined regex patterns for secret detection.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for the pattern."
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable name for the pattern."
+              },
+              "regex": {
+                "type": "string",
+                "description": "Regular expression pattern to match secrets."
+              },
+              "provider": {
+                "type": "string",
+                "description": "Provider name (e.g., 'ACME Corp')."
+              },
+              "type": {
+                "type": "string",
+                "description": "Secret type (e.g., 'Internal API Key')."
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether this pattern is active."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "regex",
+              "provider",
+              "type"
+            ]
+          }
+        },
+        "safeenv.allowList": {
+          "type": "array",
+          "default": [],
+          "description": "Literal strings that should never trigger alerts (e.g., test keys).",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

@@ -1,16 +1,19 @@
 import * as vscode from 'vscode';
-import { IScanner } from '../core/scanner/IScanner';
+import { AsyncScanner } from '../core/scanner/AsyncScanner';
+import { IConfigService } from '../core/config/IConfigService';
 import { ScanResult } from '../core/types';
 import { showInterventionModal } from '../ui/InterventionModal';
 import { SecretInjector } from './SecretInjector';
 
 export class ClipboardSentinel {
-    private scanner: IScanner;
+    private asyncScanner: AsyncScanner;
+    private configService: IConfigService;
     private injector: SecretInjector;
     private disposables: vscode.Disposable[] = [];
 
-    constructor(scanner: IScanner) {
-        this.scanner = scanner;
+    constructor(asyncScanner: AsyncScanner, configService: IConfigService) {
+        this.asyncScanner = asyncScanner;
+        this.configService = configService;
         this.injector = new SecretInjector();
     }
 
@@ -38,21 +41,41 @@ export class ClipboardSentinel {
             return;
         }
 
-        // 2. Scan
-        const result: ScanResult = this.scanner.scan(clipboardText);
+        // 2. Load Configuration
+        const config = await this.configService.load();
 
-        // 3. Decide
-        if (result.isClean) {
+        // 3. Check if scanning is enabled
+        if (!config.enableScanning) {
+            await this.performManualPaste(editor, clipboardText);
+            return;
+        }
+
+        // 4. Scan (Async)
+        const result: ScanResult = await this.asyncScanner.scanAsync(clipboardText);
+
+        // 5. Apply Allow-List Filter
+        const filteredMatches = result.matches.filter(
+            (match) => !config.allowList.includes(match.value)
+        );
+
+        const filteredResult: ScanResult = {
+            ...result,
+            matches: filteredMatches,
+            isClean: filteredMatches.length === 0,
+        };
+
+        // 6. Decide
+        if (filteredResult.isClean) {
             // CLEAN: Manually insert the text
             await this.performManualPaste(editor, clipboardText);
         } else {
             // INFECTED: Show intervention modal
-            const choice = await showInterventionModal(result, clipboardText);
+            const choice = await showInterventionModal(filteredResult, clipboardText);
 
             if (choice === 'paste') {
                 await this.performManualPaste(editor, clipboardText);
             } else if (choice === 'inject') {
-                await this.handleInjection(editor, result, clipboardText);
+                await this.handleInjection(editor, filteredResult, clipboardText);
             }
         }
     }

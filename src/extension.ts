@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { RegexScanner } from './core/scanner/RegexScanner';
+import { AsyncScanner } from './core/scanner/AsyncScanner';
 import { ClipboardSentinel } from './services/ClipboardSentinel';
 import { GhostAlertDecorator } from './ui/GhostAlertDecorator';
 import { Logger } from './utils/Logger';
+import { VSCodeConfigService } from './services/VSCodeConfigService';
 
 /**
  * This method is called when the extension is activated.
@@ -11,14 +13,18 @@ import { Logger } from './utils/Logger';
 export function activate(context: vscode.ExtensionContext) {
     Logger.info('Extension activated.');
 
-    // 1. Initialize Core Logic
-    const scanner = new RegexScanner();
+    // 1. Initialize Configuration Service
+    const configService = new VSCodeConfigService();
 
-    // 2. Initialize UI & Service Layers
-    const sentinel = new ClipboardSentinel(scanner);
+    // 2. Initialize Core Logic
+    const scanner = new RegexScanner();
+    const asyncScanner = new AsyncScanner(scanner);
+
+    // 3. Initialize UI & Service Layers
+    const sentinel = new ClipboardSentinel(asyncScanner, configService);
     const decorator = new GhostAlertDecorator(scanner);
 
-    // 3. Activate Components
+    // 4. Activate Components
     sentinel.activate(context);
     decorator.activate(context);
 
