@@ -10,6 +10,7 @@ export class ClipboardSentinel {
     private configService: IConfigService;
     private injector: SecretInjector;
     private disposables: vscode.Disposable[] = [];
+    private extensionContext?: vscode.ExtensionContext;
 
     constructor(asyncScanner: AsyncScanner, configService: IConfigService) {
         this.asyncScanner = asyncScanner;
@@ -21,6 +22,7 @@ export class ClipboardSentinel {
      * Activates the Clipboard Sentinel by overriding the paste command.
      */
     public activate(context: vscode.ExtensionContext): void {
+        this.extensionContext = context;
         const pasteOverride = vscode.commands.registerCommand(
             'editor.action.clipboardPasteAction',
             this.handlePaste.bind(this)
@@ -70,6 +72,7 @@ export class ClipboardSentinel {
             await this.performManualPaste(editor, clipboardText);
         } else {
             // INFECTED: Show intervention modal
+            this.incrementSecretsBlockedCount();
             const choice = await showInterventionModal(filteredResult, clipboardText);
 
             if (choice === 'paste') {
@@ -79,6 +82,13 @@ export class ClipboardSentinel {
             }
         }
     }
+
+    private incrementSecretsBlockedCount(): void {
+        const key = 'safeenv.secretsBlocked';
+        const current = this.extensionContext?.globalState.get<number>(key) || 0;
+        this.extensionContext?.globalState.update(key, current + 1);
+    }
+
 
     private async handleInjection(editor: vscode.TextEditor, result: ScanResult, rawText: string): Promise<void> {
         const firstMatch = result.matches[0];

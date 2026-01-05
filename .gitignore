@@ -31,4 +31,5 @@ Thumbs.db
 
 # Documentation
 .agent/
+.smart-coding-cache/
 docs/

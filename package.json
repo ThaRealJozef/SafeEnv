@@ -31,6 +31,24 @@
     "onStartupFinished"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "safeenv-sidebar",
+          "title": "GhostVault",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "safeenv-sidebar": [
+        {
+          "type": "webview",
+          "id": "safeenv.controlCenter",
+          "name": "Control Center"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "safeenv.scanDocument",

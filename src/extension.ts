@@ -5,6 +5,8 @@ import { ClipboardSentinel } from './services/ClipboardSentinel';
 import { GhostAlertDecorator } from './ui/GhostAlertDecorator';
 import { Logger } from './utils/Logger';
 import { VSCodeConfigService } from './services/VSCodeConfigService';
+import { LicenseService } from './services/LicenseService';
+import { SidebarProvider } from './ui/SidebarProvider';
 
 /**
  * This method is called when the extension is activated.
@@ -20,13 +22,32 @@ export function activate(context: vscode.ExtensionContext) {
     const scanner = new RegexScanner();
     const asyncScanner = new AsyncScanner(scanner);
 
-    // 3. Initialize UI & Service Layers
+    // 3. Initialize License Service
+    const licenseService = new LicenseService(context);
+
+    // 4. Initialize UI & Service Layers
     const sentinel = new ClipboardSentinel(asyncScanner, configService);
     const decorator = new GhostAlertDecorator(scanner);
 
-    // 4. Activate Components
+    // 5. Initialize Sidebar Provider
+    const sidebarProvider = new SidebarProvider(
+        context,
+        context.extensionUri,
+        licenseService,
+        configService
+    );
+
+    // 6. Activate Components
     sentinel.activate(context);
     decorator.activate(context);
+
+    // 7. Register Sidebar WebviewViewProvider
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(
+            SidebarProvider.viewType,
+            sidebarProvider
+        )
+    );
 
     // 4. Register Manual Scan Command
     const scanCommand = vscode.commands.registerCommand('safeenv.scanDocument', () => {

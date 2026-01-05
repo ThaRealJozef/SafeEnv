@@ -1,0 +1,319 @@
+/* GhostVault Control Center - Premium Glassmorphism */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.06);
+    --pro-gold: #fbbf24;
+    --pro-gradient: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+    --accent-red: #ef4444;
+    --success-green: #22c55e;
+    --text-muted: rgba(255, 255, 255, 0.6);
+}
+
+body {
+    font-family: var(--vscode-font-family);
+    color: var(--vscode-foreground);
+    background: var(--vscode-sidebar-background);
+    padding: 16px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+h1 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    opacity: 0.5;
+    font-weight: 600;
+}
+
+#refresh-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    width: auto;
+    margin: 0;
+    transition: color 0.2s, transform 0.2s;
+}
+
+#refresh-btn:hover {
+    color: var(--vscode-foreground);
+    transform: rotate(180deg);
+}
+
+h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 24px 0 12px 0;
+    color: var(--vscode-foreground);
+    display: flex;
+    align-items: center;
+}
+
+/* Dashboard Stats */
+.stat-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.stat-card span {
+    display: block;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--accent-red);
+    margin-bottom: 4px;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.stat-card label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+/* Pattern Manager */
+#pattern-counter {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#pattern-counter.limit-reached {
+    color: var(--accent-red);
+}
+
+#pattern-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+.pattern-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.pattern-item:hover {
+    background: var(--glass-hover);
+}
+
+.pattern-item .name {
+    font-weight: 500;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.pattern-item .meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+}
+
+.pattern-item .delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    width: auto;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.pattern-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.pattern-item .delete-btn:hover {
+    color: var(--accent-red);
+}
+
+/* Interactive Buttons */
+button.primary-btn {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 8px;
+    transition: filter 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+button.primary-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+button.primary-btn.upgrade {
+    background: var(--pro-gradient);
+    color: #000;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+
+button.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--vscode-button-background);
+    color: var(--vscode-foreground);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+button.secondary-btn:hover {
+    background: var(--glass-hover);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Pro Badge */
+.pro-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--pro-gradient);
+    color: #000;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+/* Settings Input */
+#license-input {
+    width: 100%;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+#license-input:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+
+/* Confetti & Messages */
+@keyframes confetti {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--pro-gold);
+    animation: confetti 1.5s ease-out forwards;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.message {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.message.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.message.success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
