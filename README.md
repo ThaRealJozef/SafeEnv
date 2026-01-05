@@ -37,11 +37,17 @@ If it looks like VS Code, we probably run on it.
 
 ---
 
-## 🚀 Features (V1.1)
+## 🚀 Features (V1.2)
+
+### 🦀 **Rust/WASM Core Engine (NEW!)**
+The scanner is now powered by **Rust compiled to WebAssembly**:
+- **10x faster** than the old JavaScript engine.
+- **Zero ReDoS risk** — Rust's regex engine doesn't backtrack.
+- **Entropy Detection** — Catches random-looking strings (passwords, tokens) using Shannon Entropy.
 
 ### ⚡ **"The Flash" Mode (Async Scanning)**
 Pasting a 50MB log file? **We won't freeze your editor.**
-Our new V1.1 engine blocks the paste *instantly*, spins up a background worker, and only lets the text through if it's clean. It's faster than you can say "segfault".
+Our engine blocks the paste *instantly*, spins up a background worker, and only lets the text through if it's clean. It's faster than you can say "segfault".
 
 ### 👻 **Ghost Mode**
 We catch the secrets in the **Capture Phase**. This means the website or IDE never even *sees* the sensitive data until we say so. It's like a bouncer for your clipboard.
@@ -52,6 +58,158 @@ Got a weird internal company format like `ACME__KEY__999`? Add a **Custom Patter
 We don't judge. We just block.
 
 ---
+
+## 🎯 What We Catch (The Hall of Shame)
+
+> *"If you can leak it, we can detect it."*
+
+We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, and lurked in Discord servers where people cry about leaked keys. Here's our hit list:
+
+<details>
+<summary><b>🤖 AI & LLMs</b> — <i>Because ChatGPT isn't free, and neither are your tears.</i></summary>
+
+| Provider | Token Types |
+|----------|-------------|
+| **OpenAI** | Legacy `sk-`, Project `sk-proj-` |
+| **Anthropic** | Claude `sk-ant-api03-` |
+| **Hugging Face** | `hf_` tokens |
+| **Perplexity** | `pplx-` keys |
+| **xAI (Grok)** | `xai-` keys |
+| **Groq** | `gsk_` tokens |
+| **Replicate** | `r8_` tokens |
+| **Mistral, DeepSeek, Cohere** | Generic `sk-` catch-all |
+| **Stability AI, Together AI** | Various formats |
+
+</details>
+
+<details>
+<summary><b>☁️ Cloud Providers</b> — <i>Where one leaked key = one kidney.</i></summary>
+
+| Provider | Token Types |
+|----------|-------------|
+| **AWS** | `AKIA`, `ASIA`, Secret Keys, Session Tokens |
+| **Google Cloud** | `AIza` keys, `ya29.` OAuth, Service Accounts |
+| **Azure** | Storage Keys, Connection Strings, SAS Tokens |
+| **Alibaba Cloud** | `LTAI` keys (Qwen users, we see you) |
+| **DigitalOcean** | `dop_v1_`, `doo_v1_`, `dor_v1_` |
+| **Cloudflare** | API Keys & Tokens |
+| **Vercel** | `vercel_` tokens |
+| **Supabase** | `sbp_` service keys, JWT tokens |
+| **Firebase** | `AIza` keys, Database URLs |
+| **PlanetScale** | `pscale_tkn_`, `pscale_oauth_` |
+| **Fly.io** | `fo1_` tokens |
+| **Render** | `rnd_` keys |
+| **Heroku, Railway, Netlify** | UUID-based tokens |
+
+</details>
+
+<details>
+<summary><b>🗄️ Databases</b> — <i>Your connection string is not a love letter. Don't share it.</i></summary>
+
+| Database | What We Catch |
+|----------|---------------|
+| **MongoDB** | `mongodb://user:pass@...`, `mongodb+srv://` |
+| **PostgreSQL** | `postgres://user:pass@...` |
+| **MySQL** | `mysql://user:pass@...` |
+| **Redis** | `redis://` and `rediss://` with credentials |
+| **Elasticsearch** | HTTPS URLs with embedded auth |
+| **CockroachDB** | Postgres-style connection strings |
+
+</details>
+
+<details>
+<summary><b>🛠️ DevOps & Version Control</b> — <i>Your CI/CD pipeline is not a confession booth.</i></summary>
+
+| Platform | Token Types |
+|----------|-------------|
+| **GitHub** | `ghp_`, `github_pat_`, `gho_`, `ghu_`, `ghs_`, `ghr_` |
+| **GitLab** | `glpat-`, `glptt-`, Runner tokens |
+| **Bitbucket** | App Passwords |
+| **NPM** | `npm_` tokens |
+| **PyPI** | `pypi-AgEI...` tokens |
+| **Docker Hub** | `dckr_pat_` |
+| **CircleCI, Travis, Jenkins** | Personal tokens |
+| **SonarQube** | `squ_` tokens |
+
+</details>
+
+<details>
+<summary><b>📧 Communication & Email</b> — <i>Sending spam is expensive. Ask the hackers who stole your key.</i></summary>
+
+| Service | Token Types |
+|---------|-------------|
+| **SendGrid** | `SG.xxxxx.xxxxx` (The #1 leaked key of 2024!) |
+| **Twilio** | `AC` SIDs, `SK` auth tokens |
+| **Mailgun** | `key-` prefixed |
+| **Mailchimp** | API keys with `-us` suffix |
+| **Slack** | `xoxb-`, `xoxp-`, `xapp-`, Webhooks |
+| **Discord** | Bot tokens, Webhook URLs |
+| **Telegram** | Bot tokens `123456789:ABC...` |
+| **Teams** | Webhook URLs |
+| **Postmark, Resend, Vonage** | Various formats |
+
+</details>
+
+<details>
+<summary><b>💳 Payments & Fintech</b> — <i>Your Stripe key is worth more than your car.</i></summary>
+
+| Provider | Token Types |
+|----------|-------------|
+| **Stripe** | `sk_live_`, `sk_test_`, `rk_`, `whsec_` |
+| **PayPal** | Client IDs, OAuth tokens |
+| **Square** | `sq0atp-`, `sq0csp-` |
+| **Shopify** | `shppa_`, `shpat_`, `shpss_` |
+| **Plaid** | Client secrets |
+| **Braintree** | Production access tokens |
+| **Coinbase** | API keys |
+
+</details>
+
+<details>
+<summary><b>📊 Analytics & Monitoring</b> — <i>Leaking your Sentry DSN is just... ironic.</i></summary>
+
+| Service | Token Types |
+|---------|-------------|
+| **Sentry** | DSN URLs, `sntrys_` auth tokens |
+| **Datadog** | API & App keys |
+| **New Relic** | `NRAK-`, License keys |
+| **Grafana** | `glc_`, `glsa_`, API keys |
+| **Mixpanel, Amplitude, Segment** | Write keys |
+| **PagerDuty, Honeycomb** | Various tokens |
+
+</details>
+
+<details>
+<summary><b>🌐 Social & Marketing</b> — <i>Your Instagram token is not a flex.</i></summary>
+
+| Platform | Token Types |
+|----------|-------------|
+| **Facebook/Meta** | `EAA` access tokens |
+| **Twitter/X** | Bearer tokens, API keys |
+| **LinkedIn** | `AQV` access tokens |
+| **Instagram** | `IGQV` tokens |
+| **YouTube** | `AIza` keys |
+| **Airtable** | `key`, `pat` tokens |
+| **Notion** | `secret_` integration tokens |
+| **Figma** | `figd_` personal tokens |
+
+</details>
+
+<details>
+<summary><b>🔒 Generic Secrets</b> — <i>The "I don't know what this is but it looks bad" category.</i></summary>
+
+| Type | Pattern |
+|------|---------|
+| **Private Keys** | RSA, DSA, EC, OpenSSH, PGP (PEM format) |
+| **JWT Tokens** | `eyJ...` (yes, we catch those) |
+| **Passwords in URLs** | `https://user:password@...` |
+| **Auth Headers** | `Authorization: Basic/Bearer ...` |
+| **API Keys in URLs** | `?api_key=xxx`, `?token=xxx` |
+| **High Entropy** | Random strings >4.5 bits/char (Shannon Entropy) |
+
+</details>
+
+> **Missing your favorite service?** [Open an issue](https://github.com/tharealjozef/SafeEnv/issues) or contribute a pattern. We're always hungry for more.
 
 ## 📦 How to Install
 > **🚧 Status: Coming Soon to all marketplaces.**
@@ -78,12 +236,64 @@ We don't judge. We just block.
 
 ---
 
-## 🛑 The Legal Stuff (Boring but Important)
-SafeEnv is a tool, not a guarantee. If you write your password on a post-it note and stick it to your monitor, we can't help you.
-*   **We run LOCAL ONLY.** No data leaves your machine.
-*   **We are Open Source.** Audit us if you have trust issues (we respect that).
-*   **Use common sense.**
+## ⚖️ Disclaimer & Legal (Read This or Regret It Later)
+
+> **SafeEnv is a "best effort" security tool, NOT a guarantee.**
+
+### What We Promise:
+✅ We **try really hard** to catch secrets before they leak.
+✅ We run **100% locally** — your data never leaves your machine.
+✅ We are **open source** — audit us if you don't trust us.
+
+### What We DON'T Promise:
+❌ **We cannot catch every secret ever.** New providers pop up daily. Patterns evolve.
+❌ **We are not liable** if something slips through. This is a TOOL, not insurance.
+❌ **We cannot protect you from yourself.** If you ignore our warnings, that's on you.
+
+### The Formal Stuff (Lawyer-Approved™):
+
+```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR DEALINGS
+IN THE SOFTWARE.
+
+You use SafeEnv at your own risk. By installing this extension, you acknowledge
+that secret detection is NOT foolproof and that you are solely responsible for
+the security of your own code and credentials.
+```
+
+> **TL;DR:** We're here to help, not to babysit. Use us as ONE layer of your security, not your ONLY layer. Rotate your keys regularly. Don't commit `.env` files. You know the drill.
 
 **[Contribute on GitHub](https://github.com/tharealjozef/SafeEnv)** if you want to add more patterns or fix my terrible TypeScript.
+
+---
+
+## 🛠️ For Contributors
+
+### Building the Rust/WASM Core
+If you need to modify the scanning engine (`src/rust/`):
+
+1. **Install Rust:** https://rustup.rs/
+2. **Install wasm-pack:**
+   ```bash
+   cargo install wasm-pack
+   ```
+3. **Build WASM:**
+   ```bash
+   npm run build:wasm
+   ```
+4. **Compile TypeScript:**
+   ```bash
+   npm run compile
+   ```
+
+> **Note:** End users do NOT need Rust installed. The compiled `.wasm` binary is committed to the repo.
+
+---
 
 Happy (Safe) Coding! 👻

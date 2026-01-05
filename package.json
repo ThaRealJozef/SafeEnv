@@ -128,7 +128,9 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && npm run copy:wasm",
+    "copy:wasm": "xcopy /Y /I src\\core\\scanner\\wasm out\\src\\core\\scanner\\wasm\\",
+    "build:wasm": "cd src/rust && wasm-pack build --target nodejs --out-dir ../core/scanner/wasm",
     "watch": "tsc -watch -p ./",
     "test": "node ./out/test/runTest.js"
   },

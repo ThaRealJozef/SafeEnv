@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { RegexScanner } from './core/scanner/RegexScanner';
+import { WasmScanner } from './core/scanner/WasmScanner';
 import { AsyncScanner } from './core/scanner/AsyncScanner';
 import { ClipboardSentinel } from './services/ClipboardSentinel';
 import { GhostAlertDecorator } from './ui/GhostAlertDecorator';
@@ -18,8 +18,11 @@ export function activate(context: vscode.ExtensionContext) {
     // 1. Initialize Configuration Service
     const configService = new VSCodeConfigService();
 
-    // 2. Initialize Core Logic
-    const scanner = new RegexScanner();
+    // 2. Initialize Rust/WASM Scanner Engine
+    const scanner = new WasmScanner();
+    scanner.initialize().then(() => {
+        Logger.info('SafeEnv: Rust/WASM Engine Active 🦀');
+    });
     const asyncScanner = new AsyncScanner(scanner);
 
     // 3. Initialize License Service
@@ -49,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    // 4. Register Manual Scan Command
+    // 8. Register Manual Scan Command
     const scanCommand = vscode.commands.registerCommand('safeenv.scanDocument', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {

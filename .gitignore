@@ -33,3 +33,9 @@ Thumbs.db
 .agent/
 .smart-coding-cache/
 docs/
+
+# Rust / WASM Build Artifacts
+src/rust/target/
+
+# Dev-only test files
+src/test/
