@@ -2,27 +2,27 @@ import * as vscode from 'vscode';
 import { IScanner } from '../core/scanner/IScanner';
 
 /**
- * Handles visual indicators (decorations) for secrets found in the editor.
+ * Adds visual decorations (red highlights) to detected secrets.
  */
 export class GhostAlertDecorator {
     private scanner: IScanner;
-    private decorationType: vscode.TextEditorDecorationType;
-    private timeout: NodeJS.Timeout | undefined;
+    private decoration: vscode.TextEditorDecorationType;
+    private debounce?: NodeJS.Timeout;
 
     constructor(scanner: IScanner) {
         this.scanner = scanner;
-
-        // Define the visual style for secrets
-        this.decorationType = vscode.window.createTextEditorDecorationType({
+        this.decoration = vscode.window.createTextEditorDecorationType({
             backgroundColor: 'rgba(255, 0, 0, 0.2)',
             border: '1px solid rgba(255, 0, 0, 0.5)',
             borderRadius: '2px',
-            gutterIconPath: vscode.Uri.parse(`data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="red" d="M8 1l1.5 3 3.5.5-2.5 2.5.5 3.5-3-1.5-3 1.5.5-3.5-2.5-2.5 3.5-.5L8 1z"/></svg>`),
+            gutterIconPath: vscode.Uri.parse(
+                `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path fill="red" d="M8 1l1.5 3 3.5.5-2.5 2.5.5 3.5-3-1.5-3 1.5.5-3.5-2.5-2.5 3.5-.5L8 1z"/></svg>`
+            ),
             gutterIconSize: 'contain',
             overviewRulerColor: 'red',
             overviewRulerLane: vscode.OverviewRulerLane.Right,
             after: {
-                contentText: ' ⚠️ Secret Detected',
+                contentText: ' ⚠ Secret',
                 color: 'rgba(255, 0, 0, 0.7)',
                 margin: '0 0 0 1em',
                 fontStyle: 'italic'
@@ -30,56 +30,46 @@ export class GhostAlertDecorator {
         });
     }
 
-    /**
-     * Activates the decorator by listening to editor changes.
-     */
-    public activate(context: vscode.ExtensionContext): void {
-        // Initial trigger
+    activate(ctx: vscode.ExtensionContext): void {
         if (vscode.window.activeTextEditor) {
-            this.triggerUpdateDecorations(vscode.window.activeTextEditor);
+            this.scheduleUpdate(vscode.window.activeTextEditor);
         }
 
-        // Listen for active editor changes
-        context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
-            if (editor) {
-                this.triggerUpdateDecorations(editor);
-            }
-        }));
+        ctx.subscriptions.push(
+            vscode.window.onDidChangeActiveTextEditor(e => e && this.scheduleUpdate(e))
+        );
 
-        // Listen for document changes (with debounce)
-        context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(event => {
-            if (vscode.window.activeTextEditor && event.document === vscode.window.activeTextEditor.document) {
-                this.triggerUpdateDecorations(vscode.window.activeTextEditor);
-            }
-        }));
+        ctx.subscriptions.push(
+            vscode.workspace.onDidChangeTextDocument(e => {
+                const editor = vscode.window.activeTextEditor;
+                if (editor && e.document === editor.document) {
+                    this.scheduleUpdate(editor);
+                }
+            })
+        );
     }
 
-    private triggerUpdateDecorations(editor: vscode.TextEditor): void {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-        this.timeout = setTimeout(() => this.updateDecorations(editor), 500);
+    private scheduleUpdate(editor: vscode.TextEditor): void {
+        if (this.debounce) clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => this.update(editor), 500);
     }
 
-    private updateDecorations(editor: vscode.TextEditor): void {
-        const text = editor.document.getText();
-        const result = this.scanner.scan(text);
+    private update(editor: vscode.TextEditor): void {
+        const result = this.scanner.scan(editor.document.getText());
 
-        const decorations: vscode.DecorationOptions[] = result.matches.map(match => {
-            const startPos = editor.document.positionAt(match.startIndex);
-            const endPos = editor.document.positionAt(match.endIndex);
-            const range = new vscode.Range(startPos, endPos);
-
+        const decorations = result.matches.map(m => {
+            const start = editor.document.positionAt(m.startIndex);
+            const end = editor.document.positionAt(m.endIndex);
             return {
-                range,
-                hoverMessage: `**GhostVault: ${match.provider} ${match.type} detected**\n\nAccidental exposure could compromise your security. Consider using an environment variable.`
+                range: new vscode.Range(start, end),
+                hoverMessage: `**${m.provider} ${m.type}** detected. Use an environment variable.`
             };
         });
 
-        editor.setDecorations(this.decorationType, decorations);
+        editor.setDecorations(this.decoration, decorations);
     }
 
-    public dispose(): void {
-        this.decorationType.dispose();
+    dispose(): void {
+        this.decoration.dispose();
     }
 }

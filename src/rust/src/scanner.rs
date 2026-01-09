@@ -51,8 +51,9 @@ impl Scanner {
             }
         }
 
-        // Phase 2: Entropy Detection
-        matches.extend(entropy::find_high_entropy_strings(text));
+        // Phase 2: Entropy Detection (DISABLED - causes false positives)
+        // TODO: Re-enable in Pro+ with context-aware filtering
+        // matches.extend(entropy::find_high_entropy_strings(text));
 
         // Sort by position
         matches.sort_by_key(|m| m.start_index);

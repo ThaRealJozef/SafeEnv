@@ -3,49 +3,39 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Service to handle injecting secrets into .env files and updating .gitignore.
+ * Writes secrets to .env and updates .gitignore.
  */
 export class SecretInjector {
-    /**
-     * Injects a secret into the .env file in the workspace root.
-     * Ensures .env is added to .gitignore.
-     */
-    public async inject(variableName: string, value: string): Promise<boolean> {
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders || workspaceFolders.length === 0) {
-            vscode.window.showErrorMessage('GhostVault: No workspace folder found to inject .env variable.');
+    async inject(name: string, value: string): Promise<boolean> {
+        const folders = vscode.workspace.workspaceFolders;
+        if (!folders?.length) {
+            vscode.window.showErrorMessage('No workspace folder found');
             return false;
         }
 
-        const rootPath = workspaceFolders[0].uri.fsPath;
-        const envPath = path.join(rootPath, '.env');
-        const gitignorePath = path.join(rootPath, '.gitignore');
+        const root = folders[0].uri.fsPath;
+        const envPath = path.join(root, '.env');
+        const gitignore = path.join(root, '.gitignore');
 
         try {
-            // 1. Append to .env
-            const envLine = `\n${variableName}=${value}\n`;
-            fs.appendFileSync(envPath, envLine, 'utf8');
-
-            // 2. Ensure .env is in .gitignore
-            this.ensureInGitignore(gitignorePath, '.env');
-
+            fs.appendFileSync(envPath, `\n${name}=${value}\n`, 'utf8');
+            this.addToGitignore(gitignore, '.env');
             return true;
-        } catch (error) {
-            vscode.window.showErrorMessage(`GhostVault: Failed to inject secret: ${error}`);
+        } catch (err) {
+            vscode.window.showErrorMessage(`Failed to write .env: ${err}`);
             return false;
         }
     }
 
-    private ensureInGitignore(gitignorePath: string, fileName: string): void {
+    private addToGitignore(filepath: string, entry: string): void {
         let content = '';
-        if (fs.existsSync(gitignorePath)) {
-            content = fs.readFileSync(gitignorePath, 'utf8');
+        if (fs.existsSync(filepath)) {
+            content = fs.readFileSync(filepath, 'utf8');
         }
 
-        const lines = content.split('\n');
-        if (!lines.includes(fileName)) {
-            const separator = content.endsWith('\n') ? '' : '\n';
-            fs.appendFileSync(gitignorePath, `${separator}${fileName}\n`, 'utf8');
+        if (!content.split('\n').includes(entry)) {
+            const sep = content.endsWith('\n') ? '' : '\n';
+            fs.appendFileSync(filepath, `${sep}${entry}\n`, 'utf8');
         }
     }
 }

@@ -2,64 +2,45 @@ import * as vscode from 'vscode';
 import { IConfigService, SafeEnvConfig, UserPattern } from '../core/config/IConfigService';
 
 /**
- * VS Code implementation of IConfigService.
- * Uses workspace settings to store user-defined patterns and allow-lists.
+ * Reads/writes SafeEnv settings from VS Code workspace config.
  */
 export class VSCodeConfigService implements IConfigService {
-    private static readonly CONFIG_KEY = 'safeenv';
-    private callbacks: ((config: SafeEnvConfig) => void)[] = [];
+    private static readonly KEY = 'safeenv';
+    private listeners: ((config: SafeEnvConfig) => void)[] = [];
 
     constructor() {
-        // Listen for configuration changes
-        vscode.workspace.onDidChangeConfiguration((event) => {
-            if (event.affectsConfiguration(VSCodeConfigService.CONFIG_KEY)) {
-                this.load().then((config) => {
-                    this.callbacks.forEach((cb) => cb(config));
-                });
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration(VSCodeConfigService.KEY)) {
+                this.load().then(cfg => this.listeners.forEach(cb => cb(cfg)));
             }
         });
     }
 
-    /**
-     * Loads configuration from VS Code workspace settings.
-     */
-    public async load(): Promise<SafeEnvConfig> {
-        const config = vscode.workspace.getConfiguration(VSCodeConfigService.CONFIG_KEY);
-
-        const customPatterns: UserPattern[] = config.get('customPatterns', []);
-        const allowList: string[] = config.get('allowList', []);
-        const enableScanning: boolean = config.get('enableScanning', true);
-
+    async load(): Promise<SafeEnvConfig> {
+        const cfg = vscode.workspace.getConfiguration(VSCodeConfigService.KEY);
         return {
-            enableScanning,
-            customPatterns,
-            allowList,
+            enableScanning: cfg.get('enableScanning', true),
+            customPatterns: cfg.get<UserPattern[]>('customPatterns', []),
+            allowList: cfg.get<string[]>('allowList', []),
         };
     }
 
-    /**
-     * Saves configuration to VS Code workspace settings.
-     */
-    public async save(partialConfig: Partial<SafeEnvConfig>): Promise<void> {
-        const config = vscode.workspace.getConfiguration(VSCodeConfigService.CONFIG_KEY);
+    async save(partial: Partial<SafeEnvConfig>): Promise<void> {
+        const cfg = vscode.workspace.getConfiguration(VSCodeConfigService.KEY);
+        const target = vscode.ConfigurationTarget.Global;
 
-        if (partialConfig.customPatterns !== undefined) {
-            await config.update('customPatterns', partialConfig.customPatterns, vscode.ConfigurationTarget.Global);
+        if (partial.customPatterns !== undefined) {
+            await cfg.update('customPatterns', partial.customPatterns, target);
         }
-
-        if (partialConfig.allowList !== undefined) {
-            await config.update('allowList', partialConfig.allowList, vscode.ConfigurationTarget.Global);
+        if (partial.allowList !== undefined) {
+            await cfg.update('allowList', partial.allowList, target);
         }
-
-        if (partialConfig.enableScanning !== undefined) {
-            await config.update('enableScanning', partialConfig.enableScanning, vscode.ConfigurationTarget.Global);
+        if (partial.enableScanning !== undefined) {
+            await cfg.update('enableScanning', partial.enableScanning, target);
         }
     }
 
-    /**
-     * Subscribes to configuration changes.
-     */
-    public onChange(callback: (config: SafeEnvConfig) => void): void {
-        this.callbacks.push(callback);
+    onChange(callback: (config: SafeEnvConfig) => void): void {
+        this.listeners.push(callback);
     }
 }

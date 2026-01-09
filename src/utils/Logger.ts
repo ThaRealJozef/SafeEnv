@@ -1,20 +1,15 @@
 const DEBUG = process.env.NODE_ENV !== 'production';
 
 export class Logger {
-    static info(message: string, ...args: unknown[]): void {
-        if (DEBUG) {
-            console.log(`[SafeEnv] ${message}`, ...args);
-        }
+    static info(msg: string, ...args: unknown[]) {
+        if (DEBUG) console.log(msg, ...args);
     }
 
-    static warn(message: string, ...args: unknown[]): void {
-        if (DEBUG) {
-            console.warn(`[SafeEnv] ${message}`, ...args);
-        }
+    static warn(msg: string, ...args: unknown[]) {
+        if (DEBUG) console.warn(msg, ...args);
     }
 
-    static error(message: string, ...args: unknown[]): void {
-        // Always log errors
-        console.error(`[SafeEnv] ${message}`, ...args);
+    static error(msg: string, ...args: unknown[]) {
+        console.error(msg, ...args);
     }
 }

@@ -31,19 +31,19 @@ If it looks like VS Code, we probably run on it.
 
 | ⚡ Native Support | 🌲 The Forks | ☁️ In The Cloud |
 | :--- | :--- | :--- |
-| <img src="https://www.google.com/s2/favicons?domain=cursor.sh&sz=64" height="14"/> **Cursor**<br><img src="https://antigravity.google/assets/image/blog/blog-feature-introducing-google-antigravity.png" height="14"/> **Antigravity**<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" height="14"/> **VS Code**<br><img src="https://www.google.com/s2/favicons?domain=windsurf.ai&sz=64" height="14"/> **Windsurf** | <img src="https://media.licdn.com/dms/image/v2/D560BAQGDj8tODOUsMA/company-logo_200_200/B56Zgd1b5THMAI-/0/1752847204537/traeai_logo?e=2147483647&v=beta&t=N2wG8glnNTLiGMWcuCqq8WigDQVc9ycsocKCOXqwtgM" height="14"/> **Trae**<br><img src="https://www.google.com/s2/favicons?domain=trypear.ai&sz=64" height="14"/> **PearAI**<br><img src="https://avatars.githubusercontent.com/u/165039930?s=200&v=4" height="14"/> **Void**<br><img src="https://www.google.com/s2/favicons?domain=vscodium.com&sz=64" height="14"/> **VSCodium** | <img src="https://www.google.com/s2/favicons?domain=idx.dev&sz=64" height="14"/> **Project IDX**<br><img src="https://github.githubassets.com/favicons/favicon.png" height="14"/> **Codespaces**<br><img src="https://www.google.com/s2/favicons?domain=stackblitz.com&sz=64" height="14"/> **StackBlitz** |
+| <img src="https://www.google.com/s2/favicons?domain=cursor.sh&sz=64" height="14"/> **Cursor**<br><img src="https://antigravity.google/assets/image/blog/blog-feature-introducing-google-antigravity.png" height="14"/> **Antigravity**<br><img src="https://www.google.com/s2/favicons?domain=code.visualstudio.com&sz=64" height="14"/> **VS Code**<br><img src="https://www.google.com/s2/favicons?domain=windsurf.ai&sz=64" height="14"/> **Windsurf** | <img src="https://media.licdn.com/dms/image/v2/D560BAQGDj8tODOUsMA/company-logo_200_200/B56Zgd1b5THMAI-/0/1752847204537/traeai_logo?e=2147483647&v=beta&t=N2wG8glnNTLiGMWcuCqq8WigDQVc9ycsocKCOXqwtgM" height="14"/> **Trae**<br><img src="https://www.google.com/s2/favicons?domain=trypear.ai&sz=64" height="14"/> **PearAI**<br><img src="https://avatars.githubusercontent.com/u/165039930?s=200&v=4" height="14"/> **Void**<br><img src="https://www.google.com/s2/favicons?domain=vscodium.com&sz=64" height="14"/> **VSCodium** | <img src="https://www.google.com/s2/favicons?domain=idx.dev&sz=64" height="14"/> **Project IDX**<br><img src="https://github.githubassets.com/favicons/favicon.png" height="14"/> **Codespaces**<br><img src="https://www.google.com/s2/favicons?domain=stackblitz.com&sz=64" height="14"/> **StackBlitz** |
 
 > **Web Devs:** We also have a Chrome Extension for **Replit**, **Bolt.new**, and **Lovable**. Because friends don't let friends paste raw secrets into web terminals.
 
 ---
 
-## 🚀 Features (V1.2)
+## 🚀 Features (V1.3)
 
-### 🦀 **Rust/WASM Core Engine (NEW!)**
-The scanner is now powered by **Rust compiled to WebAssembly**:
-- **10x faster** than the old JavaScript engine.
+### 🦀 **Rust/WASM Core Engine**
+The scanner is powered by **Rust compiled to WebAssembly**:
+- **10x faster** than a pure JavaScript engine.
 - **Zero ReDoS risk** — Rust's regex engine doesn't backtrack.
-- **Entropy Detection** — Catches random-looking strings (passwords, tokens) using Shannon Entropy.
+- **50+ prefix-based patterns** — High precision, zero false positives.
 
 ### ⚡ **"The Flash" Mode (Async Scanning)**
 Pasting a 50MB log file? **We won't freeze your editor.**
@@ -77,8 +77,6 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 | **xAI (Grok)** | `xai-` keys |
 | **Groq** | `gsk_` tokens |
 | **Replicate** | `r8_` tokens |
-| **Mistral, DeepSeek, Cohere** | Generic `sk-` catch-all |
-| **Stability AI, Together AI** | Various formats |
 
 </details>
 
@@ -87,19 +85,15 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 
 | Provider | Token Types |
 |----------|-------------|
-| **AWS** | `AKIA`, `ASIA`, Secret Keys, Session Tokens |
-| **Google Cloud** | `AIza` keys, `ya29.` OAuth, Service Accounts |
-| **Azure** | Storage Keys, Connection Strings, SAS Tokens |
-| **Alibaba Cloud** | `LTAI` keys (Qwen users, we see you) |
-| **DigitalOcean** | `dop_v1_`, `doo_v1_`, `dor_v1_` |
-| **Cloudflare** | API Keys & Tokens |
+| **AWS** | `AKIA`, `ASIA`, `ABIA`, `ACCA` Access Keys |
+| **Google Cloud** | `AIza` keys, `ya29.` OAuth tokens |
+| **Alibaba Cloud** | `LTAI` keys |
+| **DigitalOcean** | `dop_v1_` tokens |
 | **Vercel** | `vercel_` tokens |
-| **Supabase** | `sbp_` service keys, JWT tokens |
-| **Firebase** | `AIza` keys, Database URLs |
-| **PlanetScale** | `pscale_tkn_`, `pscale_oauth_` |
+| **Supabase** | `sbp_` service keys |
+| **PlanetScale** | `pscale_tkn_` tokens |
 | **Fly.io** | `fo1_` tokens |
 | **Render** | `rnd_` keys |
-| **Heroku, Railway, Netlify** | UUID-based tokens |
 
 </details>
 
@@ -111,9 +105,7 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 | **MongoDB** | `mongodb://user:pass@...`, `mongodb+srv://` |
 | **PostgreSQL** | `postgres://user:pass@...` |
 | **MySQL** | `mysql://user:pass@...` |
-| **Redis** | `redis://` and `rediss://` with credentials |
-| **Elasticsearch** | HTTPS URLs with embedded auth |
-| **CockroachDB** | Postgres-style connection strings |
+| **Redis** | `redis://` with credentials |
 
 </details>
 
@@ -122,13 +114,11 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 
 | Platform | Token Types |
 |----------|-------------|
-| **GitHub** | `ghp_`, `github_pat_`, `gho_`, `ghu_`, `ghs_`, `ghr_` |
-| **GitLab** | `glpat-`, `glptt-`, Runner tokens |
-| **Bitbucket** | App Passwords |
+| **GitHub** | `ghp_`, `github_pat_`, `gho_` |
+| **GitLab** | `glpat-` |
 | **NPM** | `npm_` tokens |
 | **PyPI** | `pypi-AgEI...` tokens |
 | **Docker Hub** | `dckr_pat_` |
-| **CircleCI, Travis, Jenkins** | Personal tokens |
 | **SonarQube** | `squ_` tokens |
 
 </details>
@@ -139,14 +129,13 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 | Service | Token Types |
 |---------|-------------|
 | **SendGrid** | `SG.xxxxx.xxxxx` (The #1 leaked key of 2024!) |
-| **Twilio** | `AC` SIDs, `SK` auth tokens |
+| **Twilio** | `AC` SIDs |
 | **Mailgun** | `key-` prefixed |
 | **Mailchimp** | API keys with `-us` suffix |
-| **Slack** | `xoxb-`, `xoxp-`, `xapp-`, Webhooks |
+| **Resend** | `re_` keys |
+| **Slack** | `xoxb-`, `xoxp-`, Webhooks |
 | **Discord** | Bot tokens, Webhook URLs |
 | **Telegram** | Bot tokens `123456789:ABC...` |
-| **Teams** | Webhook URLs |
-| **Postmark, Resend, Vonage** | Various formats |
 
 </details>
 
@@ -156,12 +145,8 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 | Provider | Token Types |
 |----------|-------------|
 | **Stripe** | `sk_live_`, `sk_test_`, `rk_`, `whsec_` |
-| **PayPal** | Client IDs, OAuth tokens |
-| **Square** | `sq0atp-`, `sq0csp-` |
-| **Shopify** | `shppa_`, `shpat_`, `shpss_` |
-| **Plaid** | Client secrets |
-| **Braintree** | Production access tokens |
-| **Coinbase** | API keys |
+| **Square** | `sq0atp-` |
+| **Shopify** | `shpat_` |
 
 </details>
 
@@ -171,41 +156,29 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 | Service | Token Types |
 |---------|-------------|
 | **Sentry** | DSN URLs, `sntrys_` auth tokens |
-| **Datadog** | API & App keys |
-| **New Relic** | `NRAK-`, License keys |
-| **Grafana** | `glc_`, `glsa_`, API keys |
-| **Mixpanel, Amplitude, Segment** | Write keys |
-| **PagerDuty, Honeycomb** | Various tokens |
+| **New Relic** | `NRAK-` |
+| **Grafana** | `glc_` cloud tokens |
 
 </details>
 
 <details>
-<summary><b>🌐 Social & Marketing</b> — <i>Your Instagram token is not a flex.</i></summary>
+<summary><b>🌐 Social & Productivity</b> — <i>Your Instagram token is not a flex.</i></summary>
 
 | Platform | Token Types |
 |----------|-------------|
 | **Facebook/Meta** | `EAA` access tokens |
-| **Twitter/X** | Bearer tokens, API keys |
-| **LinkedIn** | `AQV` access tokens |
-| **Instagram** | `IGQV` tokens |
-| **YouTube** | `AIza` keys |
-| **Airtable** | `key`, `pat` tokens |
+| **Airtable** | `key` tokens |
 | **Notion** | `secret_` integration tokens |
 | **Figma** | `figd_` personal tokens |
 
 </details>
 
 <details>
-<summary><b>🔒 Generic Secrets</b> — <i>The "I don't know what this is but it looks bad" category.</i></summary>
+<summary><b>🔒 Generic Secrets</b> — <i>The universal catch-alls.</i></summary>
 
 | Type | Pattern |
 |------|---------|
-| **Private Keys** | RSA, DSA, EC, OpenSSH, PGP (PEM format) |
-| **JWT Tokens** | `eyJ...` (yes, we catch those) |
-| **Passwords in URLs** | `https://user:password@...` |
-| **Auth Headers** | `Authorization: Basic/Bearer ...` |
-| **API Keys in URLs** | `?api_key=xxx`, `?token=xxx` |
-| **High Entropy** | Random strings >4.5 bits/char (Shannon Entropy) |
+| **Private Keys** | PEM format (`-----BEGIN ... PRIVATE KEY-----`) |
 
 </details>
 

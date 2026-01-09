@@ -1,28 +1,20 @@
 import * as vscode from 'vscode';
 import { ScanResult } from '../core/types';
 
-/**
- * Shows an intervention modal when a secret is detected in the clipboard.
- * Provides options to safely handle the secret.
- */
-export async function showInterventionModal(result: ScanResult, rawText: string): Promise<'inject' | 'paste' | 'cancel'> {
-    const secretCount = result.matches.length;
-    const providerList = [...new Set(result.matches.map(m => m.provider))].join(', ');
+export async function showInterventionModal(result: ScanResult, _raw: string): Promise<'inject' | 'paste' | 'cancel'> {
+    const count = result.matches.length;
+    const providers = [...new Set(result.matches.map(m => m.provider))].join(', ');
 
-    const message = `⚠️ GhostVault: ${secretCount} secret(s) detected (${providerList}). Accidental exposure can be costly!`;
+    const msg = `${count} secret(s) detected (${providers}). Paste safely?`;
 
     const options: vscode.MessageItem[] = [
-        { title: 'Inject as Environment Variable', isCloseAffordance: false },
-        { title: 'Paste Anyway (Unsafe)', isCloseAffordance: false },
+        { title: 'Save to .env', isCloseAffordance: false },
+        { title: 'Paste Anyway', isCloseAffordance: false },
     ];
 
-    const choice = await vscode.window.showWarningMessage(message, { modal: true }, ...options);
+    const choice = await vscode.window.showWarningMessage(msg, { modal: true }, ...options);
 
-    if (choice?.title === 'Inject as Environment Variable') {
-        return 'inject';
-    } else if (choice?.title === 'Paste Anyway (Unsafe)') {
-        return 'paste';
-    }
-
+    if (choice?.title === 'Save to .env') return 'inject';
+    if (choice?.title === 'Paste Anyway') return 'paste';
     return 'cancel';
 }

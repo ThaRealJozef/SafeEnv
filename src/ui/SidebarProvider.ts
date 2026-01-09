@@ -28,7 +28,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         this._configService = configService;
     }
 
-    // ... (rest of methods)
 
     private _getSecretsBlockedCount(): number {
         return this._context.globalState.get<number>('safeenv.secretsBlocked', 0);
@@ -114,7 +113,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         const plan = await this._licenseService.getPlan();
 
         if (isValid) {
-            vscode.window.showInformationMessage('🎉 Pro license activated successfully!');
+            vscode.window.showInformationMessage('Pro license activated!');
         } else {
             vscode.window.showErrorMessage('Invalid license key. Try "PRO-DEMO-KEY" for demo.');
         }
