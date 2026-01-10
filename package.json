@@ -2,7 +2,7 @@
   "name": "safeenv",
   "displayName": "SafeEnv (GhostVault)",
   "description": "A local-only secret interception tool. Prevents accidental exposure of API keys.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "publisher": "ThaRealJozef",
   "repository": {
     "type": "git",

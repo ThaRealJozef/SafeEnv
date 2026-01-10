@@ -1,4 +1,4 @@
-# SafeEnv (GhostVault) 👻🛡️
+# SafeEnv 🛡️
 ### *The "Oh Sh\*t" Button for your Clipboard.*
 
 <div align="center">
@@ -37,7 +37,7 @@ If it looks like VS Code, we probably run on it.
 
 ---
 
-## 🚀 Features (V1.3)
+## 🚀 Features (V1.4)
 
 ### 🦀 **Rust/WASM Core Engine**
 The scanner is powered by **Rust compiled to WebAssembly**:
@@ -47,14 +47,23 @@ The scanner is powered by **Rust compiled to WebAssembly**:
 
 ### ⚡ **"The Flash" Mode (Async Scanning)**
 Pasting a 50MB log file? **We won't freeze your editor.**
-Our engine blocks the paste *instantly*, spins up a background worker, and only lets the text through if it's clean. It's faster than you can say "segfault".
+Our engine blocks the paste *instantly*, spins up a background worker, and only lets the text through if it's clean.
 
 ### 👻 **Ghost Mode**
-We catch the secrets in the **Capture Phase**. This means the website or IDE never even *sees* the sensitive data until we say so. It's like a bouncer for your clipboard.
+We catch the secrets in the **Capture Phase**. The website or IDE never even *sees* the sensitive data until we say so. It's like a bouncer for your clipboard.
 
-### 🛡️ **"Not My Business" Lists**
+### ☁️ **Cloud Pattern Sync** *(Pro)*
+Stay protected against the latest threats. Pro users can **sync patterns from SafeEnv Cloud** — we update our detection library regularly so you don't have to.
+
+### 🛡️ **Custom Shield Patterns**
+Got a weird internal company format like `ACME__KEY__999`? Use our **guided wizard** to add custom patterns — no regex knowledge required!
+- Step 1: Pick a secret type
+- Step 2: Enter the prefix
+- Step 3: Name it
+- Done! SafeEnv handles the rest.
+
+### 📋 **Smart Allowlist**
 Got a dummy key like `sk_test_123`? Add it to the **Allow List**.
-Got a weird internal company format like `ACME__KEY__999`? Add a **Custom Pattern**.
 We don't judge. We just block.
 
 ---
@@ -184,32 +193,32 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 
 > **Missing your favorite service?** [Open an issue](https://github.com/tharealjozef/SafeEnv/issues) or contribute a pattern. We're always hungry for more.
 
+---
+
 ## 📦 How to Install
-> **🚧 Status: Coming Soon to all marketplaces.**
-> *Presave these instructions for the drop.*
 
 ### 💻 Desktop (Cursor / Antigravity / VS Code / Windsurf / etc...)
 
 **Method 1: The "I have a mouse" way**
-1.  Click the **Extensions** icon in the sidebar (the Tetris block thing).
+1.  Click the **Extensions** icon in the sidebar.
 2.  Search for `SafeEnv`.
 3.  Click **Install**.
 
 **Method 2: The "Hacker" way**
-1.  **Once Live:** Hit `Ctrl+P` (or `Cmd+P` if you're fancy).
+1.  Hit `Ctrl+P` (or `Cmd+P` on Mac).
 2.  Type `ext install ThaRealJozef.safeenv`.
-3.  Hit Enter. Done. You are now safer than 99% of developers.
+3.  Hit Enter.
 
 ### ☁️ Cloud (IDX / Codespaces)
-*   **Project IDX:** Open Extensions panel ➜ Search "SafeEnv" *(Coming Soon)*.
-*   **Codespaces:** Add to `.devcontainer.json` when live:
+*   **Project IDX:** Open Extensions panel ➜ Search "SafeEnv".
+*   **Codespaces:** Add to `.devcontainer.json`:
     ```json
     "customizations": { "vscode": { "extensions": ["ThaRealJozef.safeenv"] } }
     ```
 
 ---
 
-## ⚖️ Disclaimer & Legal (Read This or Regret It Later)
+## ⚖️ Disclaimer & Legal
 
 > **SafeEnv is a "best effort" security tool, NOT a guarantee.**
 
@@ -219,30 +228,18 @@ We've studied the **GitGuardian Annual Reports**, stalked **HaveIBeenPwned**, an
 ✅ We are **open source** — audit us if you don't trust us.
 
 ### What We DON'T Promise:
-❌ **We cannot catch every secret ever.** New providers pop up daily. Patterns evolve.
+❌ **We cannot catch every secret ever.** New providers pop up daily.
 ❌ **We are not liable** if something slips through. This is a TOOL, not insurance.
 ❌ **We cannot protect you from yourself.** If you ignore our warnings, that's on you.
 
-### The Formal Stuff (Lawyer-Approved™):
-
 ```
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR DEALINGS
-IN THE SOFTWARE.
-
-You use SafeEnv at your own risk. By installing this extension, you acknowledge
-that secret detection is NOT foolproof and that you are solely responsible for
-the security of your own code and credentials.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+You use SafeEnv at your own risk.
 ```
 
-> **TL;DR:** We're here to help, not to babysit. Use us as ONE layer of your security, not your ONLY layer. Rotate your keys regularly. Don't commit `.env` files. You know the drill.
+> **TL;DR:** We're here to help, not to babysit. Use us as ONE layer of your security, not your ONLY layer.
 
-**[Contribute on GitHub](https://github.com/tharealjozef/SafeEnv)** if you want to add more patterns or fix my terrible TypeScript.
+**[Contribute on GitHub](https://github.com/tharealjozef/SafeEnv)**
 
 ---
 
@@ -269,4 +266,4 @@ If you need to modify the scanning engine (`src/rust/`):
 
 ---
 
-Happy (Safe) Coding! 👻
+Happy (Safe) Coding! 🛡️
