@@ -2,7 +2,7 @@
   "name": "safeenv",
   "displayName": "SafeEnv",
   "description": "A local-only secret interception tool. Prevents accidental exposure of API keys.",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "publisher": "ThaRealJozef",
   "repository": {
     "type": "git",

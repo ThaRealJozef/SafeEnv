@@ -2,6 +2,18 @@
 
 All notable changes to SafeEnv are documented here.
 
+## [1.5.0] - 2026-01-10
+
+### Added
+- **LemonSqueezy Webhook**: Auto-creates licenses on purchase
+- **Upgrade Button**: "Get SafeEnv Pro" in sidebar
+- **Upgrade Modal**: Prompts when free tier limit hit
+
+### Changed
+- License activation button text updated
+
+---
+
 ## [1.4.1] - 2026-01-10
 
 ### Added

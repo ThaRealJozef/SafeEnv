@@ -105,7 +105,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         const plan = await this.license.getPlan();
 
         if (plan === 'FREE' && cfg.customPatterns.length >= 1) {
-            vscode.window.showWarningMessage('Free tier is limited to 1 custom pattern. Upgrade to SafeEnv Pro for unlimited patterns.');
+            const action = await vscode.window.showWarningMessage(
+                'Free tier is limited to 1 custom pattern.',
+                'Get SafeEnv Pro',
+                'Cancel'
+            );
+            if (action === 'Get SafeEnv Pro') {
+                vscode.env.openExternal(vscode.Uri.parse('https://safeenv.lemonsqueezy.com/buy'));
+            }
             return;
         }
 
@@ -546,6 +553,34 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         .pro-head { font-weight: 800; font-size: 15px; color: #facc15; }
         .pro-sub { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; }
 
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 16px 0;
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        .divider span {
+            padding: 0 12px;
+            text-transform: uppercase;
+        }
+
+        /* Upgrade Hint */
+        .upgrade-hint {
+            text-align: center;
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 8px;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -674,7 +709,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 <input id="keyIn" class="input-key" placeholder="Enter License Key" spellcheck="false" autocomplete="off">
                 <button id="pasteBtn" class="btn-icon" title="Paste Key">📋</button>
             </div>
-            <button id="activateBtn" class="btn btn-gold">Activate SafeEnv Pro</button>
+            <button id="activateBtn" class="btn btn-gold">Activate License Key</button>
+            <div class="divider">
+                <span>or</span>
+            </div>
+            <a id="upgradeLink" href="#" class="btn btn-primary" target="_blank">
+                🚀 Get SafeEnv Pro
+            </a>
+            <p class="upgrade-hint">Unlimited patterns + cloud sync for $9.99/mo</p>
         </div>
         <div id="proUI" style="display:none;">
             <div class="pro-card">
