@@ -2,6 +2,18 @@
 
 All notable changes to SafeEnv are documented here.
 
+## [1.4.1] - 2026-01-10
+
+### Added
+- **Skeleton Loading**: Shimmering placeholders during pattern sync
+- **Collapsible Sections**: Accordion-style UI for Shield Patterns and Premium Access
+- **Branded Empty State**: Ghost illustration when no custom patterns
+
+### Changed
+- Removed "GhostVault" from display name
+
+---
+
 ## [1.4.0] - 2026-01-10
 
 ### Added

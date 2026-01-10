@@ -546,12 +546,71 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         .pro-head { font-weight: 800; font-size: 15px; color: #facc15; }
         .pro-sub { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; }
 
-        .empty {
+        /* Empty State */
+        .empty-state {
             text-align: center;
-            padding: 30px;
-            color: rgba(255,255,255,0.2);
+            padding: 30px 20px;
+            opacity: 0.6;
+        }
+        .empty-ghost {
+            font-size: 48px;
+            margin-bottom: 12px;
+            filter: grayscale(0.5);
+            opacity: 0.4;
+        }
+        .empty-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 4px;
+        }
+        .empty-sub {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            height: 48px;
+            margin-bottom: 10px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .skeleton-list { display: none; }
+        .skeleton-list.active { display: block; }
+
+        /* Collapsible Sections */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 8px;
+            user-select: none;
+        }
+        .section-header:hover .label { color: rgba(255,255,255,0.8); }
+        .section-toggle {
             font-size: 12px;
-            font-style: italic;
+            color: rgba(255,255,255,0.3);
+            transition: transform 0.2s;
+        }
+        .section-toggle.collapsed { transform: rotate(-90deg); }
+        .section-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.2s;
+            opacity: 1;
+        }
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
         }
     </style>
 </head>
@@ -578,24 +637,38 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     </div>
 
     <div class="section">
-        <div class="label">🛡️ Shield Patterns</div>
-        <ul id="pList" class="p-list"></ul>
-        <div class="tooltip-wrap">
-            <button id="addBtn" class="btn btn-primary">
-                <span>+</span> Add Custom Pattern
-            </button>
-            <div class="tooltip">Teach SafeEnv to recognize your own secrets. Enter a prefix (like 'my_api_') and we'll detect anything matching it.</div>
+        <div class="section-header" data-section="patterns">
+            <div class="label">🛡️ Shield Patterns</div>
+            <span class="section-toggle">▼</span>
         </div>
-        <div class="tooltip-wrap">
-            <button id="syncBtn" class="btn btn-outline" disabled>
-                <span>☁️</span> Sync Latest Patterns 🔒
-            </button>
-            <div class="tooltip">Download the latest secret detection patterns from SafeEnv Cloud to catch new threats automatically.</div>
+        <div class="section-content" id="patternsSection">
+            <ul id="pList" class="p-list"></ul>
+            <div id="skeletonList" class="skeleton-list">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+            <div class="tooltip-wrap">
+                <button id="addBtn" class="btn btn-primary">
+                    <span>+</span> Add Custom Pattern
+                </button>
+                <div class="tooltip">Teach SafeEnv to recognize your own secrets. Enter a prefix (like 'my_api_') and we'll detect anything matching it.</div>
+            </div>
+            <div class="tooltip-wrap">
+                <button id="syncBtn" class="btn btn-outline" disabled>
+                    <span>☁️</span> Sync Latest Patterns 🔒
+                </button>
+                <div class="tooltip">Download the latest secret detection patterns from SafeEnv Cloud to catch new threats automatically.</div>
+            </div>
         </div>
     </div>
 
     <div class="section">
-        <div class="label">🔑 Premium Access</div>
+        <div class="section-header" data-section="license">
+            <div class="label">🔑 Premium Access</div>
+            <span class="section-toggle">▼</span>
+        </div>
+        <div class="section-content" id="licenseSection">
         <div id="freeUI">
             <div class="input-group">
                 <input id="keyIn" class="input-key" placeholder="Enter License Key" spellcheck="false" autocomplete="off">
@@ -614,6 +687,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             <button id="deactivateBtn" class="btn btn-outline" style="color:#ef4444; border-color:rgba(239,68,68,0.2)">
                 Deactivate License
             </button>
+        </div>
         </div>
     </div>
 
@@ -670,7 +744,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
             pList.innerHTML = '';
             if (data.patterns.length === 0) {
-                pList.innerHTML = '<li class="empty">No custom shield patterns</li>';
+                pList.innerHTML = \`
+                    <li class="empty-state">
+                        <div class="empty-ghost">👻</div>
+                        <div class="empty-title">All Clear!</div>
+                        <div class="empty-sub">No custom shield patterns yet</div>
+                    </li>\`;
             } else {
                 data.patterns.forEach(p => {
                     const li = document.createElement('li');
@@ -689,6 +768,31 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             pList.querySelectorAll('.p-del').forEach(btn => {
                 btn.onclick = () => vscode.postMessage({ command: 'deletePattern', id: btn.dataset.id });
             });
+        });
+
+        // Collapsible sections
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.onclick = () => {
+                const section = header.dataset.section;
+                const content = document.getElementById(section + 'Section');
+                const toggle = header.querySelector('.section-toggle');
+                content.classList.toggle('collapsed');
+                toggle.classList.toggle('collapsed');
+            };
+        });
+
+        // Skeleton loading for sync
+        const skeletonList = document.getElementById('skeletonList');
+        syncBtn.addEventListener('click', () => {
+            pList.style.display = 'none';
+            skeletonList.classList.add('active');
+        });
+
+        window.addEventListener('message', e => {
+            if (e.data.command === 'state') {
+                skeletonList.classList.remove('active');
+                pList.style.display = 'block';
+            }
         });
 
         vscode.postMessage({ command: 'refresh' });
